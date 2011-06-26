@@ -16,6 +16,14 @@
 (define SDL_INIT_EVERYTHING     #x0000FFFF)
 
 
+(define SDL_Init
+  (get-ffi-obj "SDL_Init" libsdl
+               (_fun _uint32 -> _int)))
+
+(define SDL_Quit
+  (get-ffi-obj "SDL_Init" libsdl
+               (_fun -> _void)))
+
 
 
 
