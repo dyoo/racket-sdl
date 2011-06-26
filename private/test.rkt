@@ -22,19 +22,32 @@
 
 
 (define (shutdown-sdl! ignored1 ignored2)
-  (printf "Exiting SDL\n")
-  (SDL_Quit))
+  (SDL_Quit)
+  (printf "SDL terminated.\n"))
 
 
+(let ([cust (make-custodian)])
+  (parameterize ([current-custodian cust])
+    (void (SDL_Init (bitwise-ior SDL_INIT_AUDIO
+                                 SDL_INIT_VIDEO)))
+    (printf "SDL initialized.\n")
+    (void (scheme_add_managed (current-custodian)
+                              #f
+                              shutdown-sdl!
+                              current-cb-box
+                              0))
 
-(printf "initializing SDL\n")
-(void (SDL_Init (bitwise-ior SDL_INIT_AUDIO
-                             SDL_INIT_VIDEO)))
 
-(void (scheme_add_managed (current-custodian)
-                    #f
-                    shutdown-sdl!
-                    current-cb-box
-                    0))
+    (let ([screen (SDL_SetVideoMode 640 480 16 SDL_SWSURFACE)])
+      (sleep 5)
+      (void))
+    
+    ;; do more things here
 
-(custodian-shutdown-all (current-custodian))
+
+    )
+
+  (custodian-shutdown-all cust))
+    
+       
+(printf "All done!\n")
